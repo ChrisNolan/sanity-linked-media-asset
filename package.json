@@ -1,31 +1,67 @@
 {
-  "name": "@chrisnolan/sanity-plugin-linked-media-asset",
+  "name": "sanity-linked-media-asset",
   "version": "0.1.0",
-  "description": "Expose & sync hidden Sanity asset fields directly in the studio.",
+  "description": "Expose and override image-asset fields (title, alt, …) directly in Sanity Studio.",
+  "author": "Chris Nolan <iam@chrisnolan.ca>",
+  "license": "MIT",
+  "homepage": "https://github.com/chrisnolan/sanity-linked-media-asset#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chrisnolan/sanity-linked-media-asset.git"
+  },
+  "bugs": {
+    "url": "https://github.com/chrisnolan/sanity-linked-media-asset/issues"
+  },
   "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
   "peerDependencies": {
-    "react": ">=18",
-    "sanity": "^3.0.0"
-  },
-  "dependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "sanity": "^3.0.0",
     "@sanity/icons": "^2.0.0",
     "@sanity/ui": "^1.0.0"
   },
-  "scripts": {
-    "dev": "tsup --watch",
-    "build": "tsup src/index.ts --dts --format esm,cjs",
-    "lint": "eslint src --ext .ts,.tsx",
-    "test": "vitest"
-  },
   "devDependencies": {
+    "@types/react": "^18.2.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.8.3",
     "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
-  }
+    "vitest": "^3.2.3"
+  },
+  "scripts": {
+    "dev": "tsup src/index.ts --watch --dts --format esm,cjs",
+    "build": "tsup src/index.ts --dts --format esm,cjs --clean",
+    "lint": "eslint \"src/**/*.{ts,tsx}\"",
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=18.17"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "sanity",
+    "sanity-plugin",
+    "image",
+    "media",
+    "asset",
+    "alt-text",
+    "accessibility",
+    "react"
+  ]
 }
