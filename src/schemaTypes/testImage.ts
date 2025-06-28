@@ -1,4 +1,5 @@
 import {defineField, defineType} from 'sanity'
+import {getLinkedMediaAssetFields} from './linkedMediaAssetFields'
 import LinkedMediaAssetField from '../components/LinkedMediaAssetField'
 
 export const testImageType = defineType({
@@ -12,34 +13,7 @@ export const testImageType = defineType({
         hotspot: true,
       },
       fields: [
-        defineField({
-          name: 'title',
-          type: 'string',
-          components: {
-            input: LinkedMediaAssetField,
-          },
-        }),
-        defineField({
-          name: 'altText',
-          type: 'string',
-          components: {
-            input: LinkedMediaAssetField,
-          },
-        }),
-        defineField({
-          name: 'description',
-          type: 'string',
-          components: {
-            input: LinkedMediaAssetField,
-          },
-        }),
-        defineField({
-          name: 'creditLine',
-          type: 'string',
-          components: {
-            input: LinkedMediaAssetField,
-          },
-        }),
+        ...getLinkedMediaAssetFields({creditLine: {enabled: true}}),
         defineField({
           name: 'customField',
           description: "This field doesn't normally exist on the image asset... but now it will?",
