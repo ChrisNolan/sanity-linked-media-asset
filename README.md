@@ -14,39 +14,33 @@ This plugin provides a way to define image fields in Sanity Studio that are "lin
 In your schema, use the `getLinkedMediaAssetFields` helper to add standard fields to an image field:
 
 ```ts
-import {defineField} from 'sanity'
-import {getLinkedMediaAssetFields} from './schemaTypes/linkedMediaAssetFields'
+import { defineField } from "sanity";
+import { getLinkedMediaAssetFields } from "./schemaTypes/linkedMediaAssetFields";
 
 defineField({
-  name: 'image',
-  type: 'image',
+  name: "image",
+  type: "image",
   fields: [
     ...getLinkedMediaAssetFields({
-      title: {enabled: true}, // enabled by default
-      altText: {enabled: true}, // enabled by default
-      description: {enabled: true}, // enabled by default
-      creditLine: {enabled: true}, // disabled by default, enable if needed
+      title: { enabled: true }, // enabled by default
+      altText: { enabled: true }, // enabled by default
+      description: { enabled: true }, // enabled by default
+      creditLine: { enabled: true }, // disabled by default, enable if needed
     }),
     // any custom fields
   ],
-})
+});
 ```
 
 #### API Version for Sanity Client
 
-The `LinkedMediaAssetField` component uses Sanity's `useClient` hook to fetch and update asset data. By default, it uses a recent stable API version, but you can override this by passing an `apiVersion` prop to the component if needed:
+The `LinkedMediaAssetField` component uses Sanity's `useClient` hook to fetch and update asset data. By default, it uses the API version `2023-08-01`. If you need to override this (for example, to match your project's Sanity API version), you can set the environment variable `SANITY_STUDIO_LINKED_MEDIA_ASSET_API_VERSION` in your build or runtime environment:
 
-```ts
-defineField({
-  name: 'title',
-  type: 'string',
-  components: {
-    input: (props) => <LinkedMediaAssetField {...props} apiVersion="2023-08-01" />,
-  },
-})
+```sh
+export SANITY_STUDIO_LINKED_MEDIA_ASSET_API_VERSION=2025-05-01
 ```
 
-If you are using the helper, you can pass a custom component to the helper or override the default globally if you wrap or re-export the component.
+This will be picked up automatically by the component (as long as your build tool exposes `SANITY_STUDIO_`-prefixed variables to the browser, which is the convention for Sanity Studio v3+). If the environment variable is not set, the default version will be used.
 
 #### Accepted Option Keys
 

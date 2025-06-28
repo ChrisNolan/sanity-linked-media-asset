@@ -18,9 +18,7 @@ import { CopyIcon } from "@sanity/icons";
  *
  * @public
  */
-export interface LinkedMediaAssetFieldProps extends StringInputProps {
-  apiVersion?: string;
-}
+export interface LinkedMediaAssetFieldProps extends StringInputProps {}
 
 // --- Hooks ---
 /**
@@ -93,11 +91,18 @@ function useAssetFieldValue(
 export default function LinkedMediaAssetField(
   props: LinkedMediaAssetFieldProps
 ) {
-  const { value, onChange, elementProps, path, apiVersion } = props;
+  const { value, onChange, elementProps, path } = props;
   const toast = useToast();
   const { onChange: _ignoredOnChange, ...restElementProps } =
     elementProps || {};
-  const client = useClient({ apiVersion: apiVersion || "2023-08-01" });
+  // Use environment variable to allow override, else use default
+  const apiVersion =
+    typeof process !== "undefined" &&
+    process.env &&
+    process.env.SANITY_STUDIO_LINKED_MEDIA_ASSET_API_VERSION
+      ? process.env.SANITY_STUDIO_LINKED_MEDIA_ASSET_API_VERSION
+      : "2023-08-01";
+  const client = useClient({ apiVersion });
   const { assetRef, fieldName } = useImageFieldAndAsset(path);
   const [assetValue, setAssetValue, assetInputValue, setAssetInputValue] =
     useAssetFieldValue(assetRef, fieldName, client);
