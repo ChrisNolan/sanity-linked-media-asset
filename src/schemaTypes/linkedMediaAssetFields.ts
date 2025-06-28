@@ -1,8 +1,31 @@
+import {defineField, FieldDefinition} from 'sanity'
+import LinkedMediaAssetField from '../components/LinkedMediaAssetField'
+
+/**
+ * Type alias for the field definitions returned by getLinkedMediaAssetFields.
+ * Matches the FieldDefinition type
+ */
+export type LinkedMediaAssetFieldDefinition = FieldDefinition
+
+/**
+ * Options for getLinkedMediaAssetFields.
+ *
+ * @public
+ */
+export interface LinkedMediaAssetFieldsOptions {
+  title?: {enabled: boolean}
+  altText?: {enabled: boolean}
+  description?: {enabled: boolean}
+  creditLine?: {enabled: boolean}
+  // Add more fields as needed
+}
+
 /**
  * Returns an array of linked asset text fields for use inside an image field.
  * Each field uses the LinkedMediaAssetField component for local/asset value sync.
  *
  * Usage:
+ * ```ts
  *   import {getLinkedMediaAssetFields} from './linkedMediaAssetFields'
  *   ...
  *   fields: [
@@ -20,26 +43,15 @@
  *       ],
  *     }),
  *   ]
+ * ```
+ * @public
  */
-import {defineField, FieldDefinition} from 'sanity'
-import LinkedMediaAssetField from '../components/LinkedMediaAssetField'
-
-/**
- * Type alias for the field definitions returned by getLinkedMediaAssetFields.
- */
-export type LinkedMediaAssetFieldDefinition = FieldDefinition
-
-export interface LinkedMediaAssetFieldsOptions {
-  title?: {enabled: boolean}
-  altText?: {enabled: boolean}
-  description?: {enabled: boolean}
-  creditLine?: {enabled: boolean}
-  // Add more fields as needed
-}
-
 export function getLinkedMediaAssetFields(
   options: LinkedMediaAssetFieldsOptions = {},
 ): LinkedMediaAssetFieldDefinition[] {
+  /**
+   * @internal
+   */
   const fieldNames: Array<keyof LinkedMediaAssetFieldsOptions> = [
     'title',
     'altText',
@@ -51,11 +63,13 @@ export function getLinkedMediaAssetFields(
   // Runtime check for unknown keys (dev only)
   if (process.env.NODE_ENV !== 'production') {
     const allowed = new Set(fieldNames)
-    const unknownKeys = Object.keys(options).filter((k) => !allowed.has(k as keyof LinkedMediaAssetFieldsOptions))
+    const unknownKeys = Object.keys(options).filter(
+      (k) => !allowed.has(k as keyof LinkedMediaAssetFieldsOptions),
+    )
     if (unknownKeys.length > 0) {
       throw new Error(
         `Unknown option key(s) passed to getLinkedMediaAssetFields: ${unknownKeys.join(', ')}.\n` +
-        `Accepted keys: ${fieldNames.join(', ')}`
+          `Accepted keys: ${fieldNames.join(', ')}`,
       )
     }
   }
