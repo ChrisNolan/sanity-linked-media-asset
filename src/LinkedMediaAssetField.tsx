@@ -1,5 +1,11 @@
 import React from "react";
-import { set, unset, StringInputProps, useFormValue, useClient } from "sanity";
+import {
+  set,
+  unset,
+  type StringInputProps,
+  useFormValue,
+  useClient,
+} from "sanity";
 import {
   Box,
   Flex,
@@ -15,13 +21,6 @@ import {
 } from "@sanity/ui";
 import { HelpCircleIcon } from "@sanity/icons";
 import { CopyIcon } from "@sanity/icons";
-
-/**
- * Props for the LinkedMediaAssetField component.
- *
- * @public
- */
-export interface LinkedMediaAssetFieldProps extends StringInputProps {}
 
 // --- Hooks ---
 /**
@@ -96,9 +95,8 @@ function useAssetFieldValue(
  * @param props - See {@link LinkedMediaAssetFieldProps}
  * @public
  */
-export default function LinkedMediaAssetField(
-  props: LinkedMediaAssetFieldProps
-) {
+
+const LinkedMediaAssetField: React.FC<StringInputProps> = (props) => {
   const { value, onChange, elementProps, path } = props;
   const toast = useToast();
   const { onChange: _ignoredOnChange, ...restElementProps } =
@@ -201,7 +199,9 @@ export default function LinkedMediaAssetField(
       </Stack>
     </Card>
   );
-}
+};
+
+export default LinkedMediaAssetField;
 
 interface AssetFieldInputProps {
   assetInputValue: string | undefined;

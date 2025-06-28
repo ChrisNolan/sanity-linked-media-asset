@@ -19,6 +19,7 @@ export const testImageType = defineType({
           description: "This field doesn't normally exist on the image asset... but now it will?",
           type: 'string',
           components: {
+            // @ts-ignore - TODO repo structure issue, TS can't resolve this import
             input: LinkedMediaAssetField,
           },
         }),

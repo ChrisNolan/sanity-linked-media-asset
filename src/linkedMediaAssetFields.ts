@@ -88,6 +88,7 @@ export function getLinkedMediaAssetFields(
       defineField({
         name,
         type: "string",
+        // @ts-ignore - TODO repo structure issue, TS can't resolve this import
         components: { input: LinkedMediaAssetField },
       })
     );
