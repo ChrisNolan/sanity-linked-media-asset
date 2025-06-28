@@ -121,80 +121,98 @@ const LinkedMediaAssetField: React.FC<StringInputProps> = (props) => {
     setUseSharedAsset(!value);
   }, [value]);
 
+  // TODO consider options to give more control over which field has priority
+  // e.g., always use asset value, always use local value, or allow user to choose
+  // Also, do they want to have the 'local' field visible before selecting an asset?
   return (
-    <Card padding={3} radius={2}>
-      <Stack space={3}>
-        {assetValue !== undefined && (
-          <AssetFieldInput
-            assetInputValue={assetInputValue}
-            setAssetInputValue={setAssetInputValue}
-            assetRef={assetRef}
-            assetValue={assetValue}
-            setAssetValue={setAssetValue}
-            fieldName={fieldName}
-            client={client}
-            updatingAsset={updatingAsset}
-            setUpdatingAsset={setUpdatingAsset}
-            toast={toast}
-            useSharedAsset={useSharedAsset}
-            setUseSharedAsset={setUseSharedAsset}
-            onChange={onChange}
-          />
-        )}
-        {!useSharedAsset && (
-          <Flex direction="row" align="flex-end" gap={3}>
-            <Box flex={1}>
-              <Stack space={2}>
-                <Text size={1} weight="medium">
-                  Local
-                </Text>
-                {props.renderDefault ? (
-                  props.renderDefault({
-                    ...props,
-                    elementProps: props.elementProps,
-                  })
-                ) : process.env.NODE_ENV === "development" ? (
-                  (() => {
-                    throw new Error(
-                      "LinkedMediaAssetField: renderDefault is required but was not provided. Check your schema/component registration."
-                    );
-                  })()
-                ) : (
-                  <Card padding={3} tone="critical">
-                    <Text size={1} weight="bold">
-                      ERROR: renderDefault missing
+    <Card padding={2} radius={2}>
+      <Stack space={2}>
+        {assetRef === undefined ? (
+          <Card padding={4} tone="caution" radius={2} shadow={1}>
+            <Flex align="center" gap={3}>
+              <HelpCircleIcon
+                style={{ color: "var(--card-muted-fg-color, #aaa)" }}
+              />
+              <Text size={2}>
+                Select or upload an asset to enable linked asset fields.
+              </Text>
+            </Flex>
+          </Card>
+        ) : (
+          <>
+            {assetValue !== undefined && (
+              <AssetFieldInput
+                assetInputValue={assetInputValue}
+                setAssetInputValue={setAssetInputValue}
+                assetRef={assetRef}
+                assetValue={assetValue}
+                setAssetValue={setAssetValue}
+                fieldName={fieldName}
+                client={client}
+                updatingAsset={updatingAsset}
+                setUpdatingAsset={setUpdatingAsset}
+                toast={toast}
+                useSharedAsset={useSharedAsset}
+                setUseSharedAsset={setUseSharedAsset}
+                onChange={onChange}
+              />
+            )}
+            {!useSharedAsset && (
+              <Flex direction="row" align="flex-end" gap={3}>
+                <Box flex={1}>
+                  <Stack space={2}>
+                    <Text size={1} weight="medium">
+                      Local
                     </Text>
-                    <Text size={1}>
-                      This field requires Sanity Studio v3+ and correct schema
-                      registration.
-                    </Text>
-                  </Card>
-                )}
-              </Stack>
-            </Box>
-            <Box>
-              <Tooltip
-                content={
-                  <Box padding={2}>
-                    <Text size={2}>Copy asset value to local field</Text>
-                  </Box>
-                }
-                fallbackPlacements={["right", "left"]}
-                placement="top"
-                portal
-              >
-                <span style={{ display: "inline-block" }}>
-                  <Button
-                    icon={CopyIcon}
-                    mode="bleed"
-                    aria-label="Copy from asset"
-                    onClick={() => onChange(set(assetValue))}
-                    disabled={value === assetValue}
-                  />
-                </span>
-              </Tooltip>
-            </Box>
-          </Flex>
+                    {props.renderDefault ? (
+                      props.renderDefault({
+                        ...props,
+                        elementProps: props.elementProps,
+                      })
+                    ) : process.env.NODE_ENV === "development" ? (
+                      (() => {
+                        throw new Error(
+                          "LinkedMediaAssetField: renderDefault is required but was not provided. Check your schema/component registration."
+                        );
+                      })()
+                    ) : (
+                      <Card padding={3} tone="critical">
+                        <Text size={1} weight="bold">
+                          ERROR: renderDefault missing
+                        </Text>
+                        <Text size={1}>
+                          This field requires Sanity Studio v3+ and correct
+                          schema registration.
+                        </Text>
+                      </Card>
+                    )}
+                  </Stack>
+                </Box>
+                <Box>
+                  <Tooltip
+                    content={
+                      <Box padding={2}>
+                        <Text size={2}>Copy asset value to local field</Text>
+                      </Box>
+                    }
+                    fallbackPlacements={["right", "left"]}
+                    placement="top"
+                    portal
+                  >
+                    <span style={{ display: "inline-block" }}>
+                      <Button
+                        icon={CopyIcon}
+                        mode="bleed"
+                        aria-label="Copy from asset"
+                        onClick={() => onChange(set(assetValue))}
+                        disabled={value === assetValue}
+                      />
+                    </span>
+                  </Tooltip>
+                </Box>
+              </Flex>
+            )}
+          </>
         )}
       </Stack>
     </Card>
