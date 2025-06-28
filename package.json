@@ -11,17 +11,21 @@
     "LICENSE"
   ],
   "peerDependencies": {
-    "sanity": "^3.0.0",
-    "react": ">=18"
+    "react": ">=18",
+    "sanity": "^3.0.0"
   },
   "dependencies": {
-    "@sanity/ui": "^1.0.0",
-    "@sanity/icons": "^2.0.0"
+    "@sanity/icons": "^2.0.0",
+    "@sanity/ui": "^1.0.0"
   },
   "scripts": {
     "dev": "tsup --watch",
-    "build": "tsup",
+    "build": "tsup src/index.ts --dts --format esm,cjs",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "vitest"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
   }
 }
