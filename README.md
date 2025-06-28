@@ -32,10 +32,19 @@ defineField({
 })
 ```
 
-#### Default Options
+#### Accepted Option Keys
 
-- All fields except `creditLine` are enabled by default. You can disable any by passing `{fieldName: {enabled: false}}`.
-- `creditLine` is only included if you explicitly set `{creditLine: {enabled: true}}`.
+The following keys are accepted in the options object for `getLinkedMediaAssetFields`:
+
+- `title` (enabled by default)
+- `altText` (enabled by default)
+- `description` (enabled by default)
+- `creditLine` (disabled by default, enable if needed)
+
+All fields except `creditLine` are enabled by default. You can disable any by passing `{fieldName: {enabled: false}}`.
+`creditLine` is only included if you explicitly set `{creditLine: {enabled: true}}`.
+
+**Note:** If you pass any unknown keys to `getLinkedMediaAssetFields`, an error will be thrown in development mode to help catch typos or misconfigurations. Only the keys listed above are accepted.
 
 ### 2. What does the input look like?
 

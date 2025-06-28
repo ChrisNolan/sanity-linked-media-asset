@@ -47,6 +47,19 @@ export function getLinkedMediaAssetFields(
     'creditLine',
     // Add more fields as needed
   ]
+
+  // Runtime check for unknown keys (dev only)
+  if (process.env.NODE_ENV !== 'production') {
+    const allowed = new Set(fieldNames)
+    const unknownKeys = Object.keys(options).filter((k) => !allowed.has(k as keyof LinkedMediaAssetFieldsOptions))
+    if (unknownKeys.length > 0) {
+      throw new Error(
+        `Unknown option key(s) passed to getLinkedMediaAssetFields: ${unknownKeys.join(', ')}.\n` +
+        `Accepted keys: ${fieldNames.join(', ')}`
+      )
+    }
+  }
+
   return fieldNames
     .filter((name) => {
       if (name === 'creditLine') {
