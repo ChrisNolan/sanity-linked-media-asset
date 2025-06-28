@@ -1,11 +1,11 @@
-import {defineField, FieldDefinition} from 'sanity'
-import LinkedMediaAssetField from '../components/LinkedMediaAssetField'
+import { defineField, FieldDefinition } from "sanity";
+import LinkedMediaAssetField from "./LinkedMediaAssetField";
 
 /**
  * Type alias for the field definitions returned by getLinkedMediaAssetFields.
  * Matches the FieldDefinition type
  */
-export type LinkedMediaAssetFieldDefinition = FieldDefinition
+export type LinkedMediaAssetFieldDefinition = FieldDefinition;
 
 /**
  * Options for getLinkedMediaAssetFields.
@@ -13,10 +13,10 @@ export type LinkedMediaAssetFieldDefinition = FieldDefinition
  * @public
  */
 export interface LinkedMediaAssetFieldsOptions {
-  title?: {enabled: boolean}
-  altText?: {enabled: boolean}
-  description?: {enabled: boolean}
-  creditLine?: {enabled: boolean}
+  title?: { enabled: boolean };
+  altText?: { enabled: boolean };
+  description?: { enabled: boolean };
+  creditLine?: { enabled: boolean };
   // Add more fields as needed
 }
 
@@ -47,47 +47,48 @@ export interface LinkedMediaAssetFieldsOptions {
  * @public
  */
 export function getLinkedMediaAssetFields(
-  options: LinkedMediaAssetFieldsOptions = {},
+  options: LinkedMediaAssetFieldsOptions = {}
 ): LinkedMediaAssetFieldDefinition[] {
   /**
    * @internal
    */
   const fieldNames: Array<keyof LinkedMediaAssetFieldsOptions> = [
-    'title',
-    'altText',
-    'description',
-    'creditLine',
+    "title",
+    "altText",
+    "description",
+    "creditLine",
     // Add more fields as needed
-  ]
+  ];
 
   // Runtime check for unknown keys (dev only)
-  if (process.env.NODE_ENV !== 'production') {
-    const allowed = new Set(fieldNames)
+  if (process.env.NODE_ENV !== "production") {
+    const allowed = new Set(fieldNames);
     const unknownKeys = Object.keys(options).filter(
-      (k) => !allowed.has(k as keyof LinkedMediaAssetFieldsOptions),
-    )
+      (k) => !allowed.has(k as keyof LinkedMediaAssetFieldsOptions)
+    );
     if (unknownKeys.length > 0) {
       throw new Error(
-        `Unknown option key(s) passed to getLinkedMediaAssetFields: ${unknownKeys.join(', ')}.\n` +
-          `Accepted keys: ${fieldNames.join(', ')}`,
-      )
+        `Unknown option key(s) passed to getLinkedMediaAssetFields: ${unknownKeys.join(
+          ", "
+        )}.\n` + `Accepted keys: ${fieldNames.join(", ")}`
+      );
     }
   }
 
   return fieldNames
     .filter((name) => {
-      if (name === 'creditLine') {
+      if (name === "creditLine") {
         // creditLine is false by default
-        return options.creditLine?.enabled === true
+        return options.creditLine?.enabled === true;
       }
       // All others are true by default unless explicitly disabled
-      return options[name]?.enabled !== false
+      return options[name]?.enabled !== false;
     })
     .map((name) =>
       defineField({
         name,
-        type: 'string',
-        components: {input: LinkedMediaAssetField},
-      }),
-    )
+        type: "string",
+        components: { input: LinkedMediaAssetField },
+      })
+    );
 }

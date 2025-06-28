@@ -137,3 +137,7 @@ There isn't a way to edit asset fields directly from the desk (without opening t
 ```
 
 So this bit is the part that they say is out of scope of the project so... maybe I can make this a 'package' on its own? :thinking: [This PR](https://github.com/sanity-io/sanity-plugin-media/pull/216) is set to give an 'edit image' link but it has been a year with no action on it.
+
+## Disclaimer
+
+This package is provided as-is, without warranty of any kind. Use at your own risk. The author is not responsible for any data loss, corruption, or unintended side effects that may result from using this plugin. Please test thoroughly before using in production environments.

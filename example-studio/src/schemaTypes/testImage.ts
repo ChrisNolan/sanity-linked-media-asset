@@ -1,6 +1,6 @@
 import {defineField, defineType} from 'sanity'
-import {getLinkedMediaAssetFields} from './linkedMediaAssetFields'
-import LinkedMediaAssetField from '../components/LinkedMediaAssetField'
+import {getLinkedMediaAssetFields} from '../../../src/linkedMediaAssetFields'
+import LinkedMediaAssetField from '../../../src/LinkedMediaAssetField'
 
 export const testImageType = defineType({
   name: 'testImage',

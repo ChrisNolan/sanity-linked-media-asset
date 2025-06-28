@@ -1,7 +1,17 @@
-import React from 'react'
-import {set, unset, StringInputProps, useFormValue, useClient} from 'sanity'
-import {Box, Flex, Text, Button, TextInput, Stack, Card, Tooltip, useToast} from '@sanity/ui'
-import {CopyIcon} from '@sanity/icons'
+import React from "react";
+import { set, unset, StringInputProps, useFormValue, useClient } from "sanity";
+import {
+  Box,
+  Flex,
+  Text,
+  Button,
+  TextInput,
+  Stack,
+  Card,
+  Tooltip,
+  useToast,
+} from "@sanity/ui";
+import { CopyIcon } from "@sanity/icons";
 
 /**
  * Props for the LinkedMediaAssetField component.
@@ -9,7 +19,7 @@ import {CopyIcon} from '@sanity/icons'
  * @public
  */
 export interface LinkedMediaAssetFieldProps extends StringInputProps {
-  apiVersion?: string
+  apiVersion?: string;
 }
 
 // --- Hooks ---
@@ -18,40 +28,53 @@ export interface LinkedMediaAssetFieldProps extends StringInputProps {
  */
 function useImageFieldAndAsset(path: any) {
   // The parent is the image field, which is one level up in the path
-  const imageField = useFormValue(path.slice(0, -1)) as any
+  const imageField = useFormValue(path.slice(0, -1)) as any;
   // The asset ref is at imageField?.asset?._ref
-  const assetRef = imageField?.asset?._ref
+  const assetRef = imageField?.asset?._ref;
   // The field name (e.g., 'title', 'altText', etc.)
   // Use the last segment of the path as the field name, cast to string
-  const fieldName = String(path[path.length - 1])
-  return {imageField, assetRef, fieldName}
+  const fieldName = String(path[path.length - 1]);
+  return { imageField, assetRef, fieldName };
 }
 
 /**
  * Fetches the asset field value from Sanity and keeps local state in sync.
  * Returns [assetValue, setAssetValue, assetInputValue, setAssetInputValue].
  */
-function useAssetFieldValue(assetRef: string | undefined, fieldName: string, client: any) {
-  const [assetValue, setAssetValue] = React.useState<string | undefined>(undefined)
-  const [assetInputValue, setAssetInputValue] = React.useState<string | undefined>(undefined)
+function useAssetFieldValue(
+  assetRef: string | undefined,
+  fieldName: string,
+  client: any
+) {
+  const [assetValue, setAssetValue] = React.useState<string | undefined>(
+    undefined
+  );
+  const [assetInputValue, setAssetInputValue] = React.useState<
+    string | undefined
+  >(undefined);
   React.useEffect(() => {
     if (!assetRef) {
-      setAssetValue(undefined)
-      setAssetInputValue(undefined)
-      return
+      setAssetValue(undefined);
+      setAssetInputValue(undefined);
+      return;
     }
     // Fetch the asset document from Sanity
     // NOTE this is 'static' and not 'live by default' so...
     const fetchAsset = async () => {
-      const query = `*[_id == $id][0]{${fieldName}}`
-      const params = {id: assetRef}
-      const asset = await client.fetch(query, params)
-      setAssetValue(asset?.[fieldName])
-      setAssetInputValue(asset?.[fieldName] ?? '')
-    }
-    fetchAsset()
-  }, [assetRef, fieldName, client])
-  return [assetValue, setAssetValue, assetInputValue, setAssetInputValue] as const
+      const query = `*[_id == $id][0]{${fieldName}}`;
+      const params = { id: assetRef };
+      const asset = await client.fetch(query, params);
+      setAssetValue(asset?.[fieldName]);
+      setAssetInputValue(asset?.[fieldName] ?? "");
+    };
+    fetchAsset();
+  }, [assetRef, fieldName, client]);
+  return [
+    assetValue,
+    setAssetValue,
+    assetInputValue,
+    setAssetInputValue,
+  ] as const;
 }
 
 // --- Main Component ---
@@ -67,18 +90,18 @@ function useAssetFieldValue(assetRef: string | undefined, fieldName: string, cli
  * @param props - See {@link LinkedMediaAssetFieldProps}
  * @public
  */
-export default function LinkedMediaAssetField(props: LinkedMediaAssetFieldProps) {
-  const {value, onChange, elementProps, path, apiVersion} = props
-  const toast = useToast()
-  const {onChange: _ignoredOnChange, ...restElementProps} = elementProps || {}
-  const client = useClient({apiVersion: apiVersion || '2023-08-01'})
-  const {assetRef, fieldName} = useImageFieldAndAsset(path)
-  const [assetValue, setAssetValue, assetInputValue, setAssetInputValue] = useAssetFieldValue(
-    assetRef,
-    fieldName,
-    client,
-  )
-  const [updatingAsset, setUpdatingAsset] = React.useState(false)
+export default function LinkedMediaAssetField(
+  props: LinkedMediaAssetFieldProps
+) {
+  const { value, onChange, elementProps, path, apiVersion } = props;
+  const toast = useToast();
+  const { onChange: _ignoredOnChange, ...restElementProps } =
+    elementProps || {};
+  const client = useClient({ apiVersion: apiVersion || "2023-08-01" });
+  const { assetRef, fieldName } = useImageFieldAndAsset(path);
+  const [assetValue, setAssetValue, assetInputValue, setAssetInputValue] =
+    useAssetFieldValue(assetRef, fieldName, client);
+  const [updatingAsset, setUpdatingAsset] = React.useState(false);
 
   return (
     <Card padding={3} radius={2}>
@@ -89,9 +112,11 @@ export default function LinkedMediaAssetField(props: LinkedMediaAssetFieldProps)
               Local
             </Text>
             <TextInput
-              value={value || ''}
+              value={value || ""}
               onChange={(e) =>
-                onChange(e.currentTarget.value ? set(e.currentTarget.value) : unset())
+                onChange(
+                  e.currentTarget.value ? set(e.currentTarget.value) : unset()
+                )
               }
               placeholder={`Enter ${fieldName}`}
               {...restElementProps}
@@ -128,20 +153,20 @@ export default function LinkedMediaAssetField(props: LinkedMediaAssetFieldProps)
         )}
       </Flex>
     </Card>
-  )
+  );
 }
 
 interface AssetFieldInputProps {
-  assetInputValue: string | undefined
-  setAssetInputValue: (v: string) => void
-  assetRef: string | undefined
-  assetValue: string | undefined
-  setAssetValue: (v: string | undefined) => void
-  fieldName: string
-  client: any
-  updatingAsset: boolean
-  setUpdatingAsset: (v: boolean) => void
-  toast: ReturnType<typeof useToast>
+  assetInputValue: string | undefined;
+  setAssetInputValue: (v: string) => void;
+  assetRef: string | undefined;
+  assetValue: string | undefined;
+  setAssetValue: (v: string | undefined) => void;
+  fieldName: string;
+  client: any;
+  updatingAsset: boolean;
+  setUpdatingAsset: (v: boolean) => void;
+  toast: ReturnType<typeof useToast>;
 }
 
 /**
@@ -158,31 +183,31 @@ async function handleAssetFieldBlur({
   client,
   toast,
 }: {
-  assetRef: string | undefined
-  assetInputValue: string | undefined
-  assetValue: string | undefined
-  setUpdatingAsset: (v: boolean) => void
-  setAssetValue: (v: string | undefined) => void
-  fieldName: string
-  client: any
-  toast: ReturnType<typeof useToast>
+  assetRef: string | undefined;
+  assetInputValue: string | undefined;
+  assetValue: string | undefined;
+  setUpdatingAsset: (v: boolean) => void;
+  setAssetValue: (v: string | undefined) => void;
+  fieldName: string;
+  client: any;
+  toast: ReturnType<typeof useToast>;
 }) {
-  if (!assetRef || assetInputValue === assetValue) return
-  setUpdatingAsset(true)
+  if (!assetRef || assetInputValue === assetValue) return;
+  setUpdatingAsset(true);
   try {
     await client
       .patch(assetRef)
-      .set({[fieldName]: assetInputValue})
-      .commit()
-    setAssetValue(assetInputValue)
+      .set({ [fieldName]: assetInputValue })
+      .commit();
+    setAssetValue(assetInputValue);
   } catch (err) {
     toast.push({
-      status: 'error',
-      title: 'Failed to update asset',
+      status: "error",
+      title: "Failed to update asset",
       description: err instanceof Error ? err.message : String(err),
-    })
+    });
   } finally {
-    setUpdatingAsset(false)
+    setUpdatingAsset(false);
   }
 }
 
@@ -208,7 +233,7 @@ function AssetFieldInput({
           Asset
         </Text>
         <TextInput
-          value={assetInputValue || ''}
+          value={assetInputValue || ""}
           onChange={(e) => setAssetInputValue(e.currentTarget.value)}
           onBlur={() =>
             handleAssetFieldBlur({
@@ -223,10 +248,10 @@ function AssetFieldInput({
             })
           }
           placeholder={`Asset ${fieldName}`}
-          style={{minWidth: 120}}
+          style={{ minWidth: 120 }}
           disabled={updatingAsset}
         />
       </Stack>
     </Box>
-  )
+  );
 }
