@@ -1,7 +1,12 @@
 import {defineConfig} from 'sanity'
+import {media, type MediaToolOptions} from 'sanity-plugin-media'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
-import {schemaTypes} from './schemaTypes'
+import {schemaTypes} from './src/schemaTypes'
+
+const mediaConfig: MediaToolOptions = {
+  creditLine: {enabled: true},
+}
 
 export default defineConfig({
   name: 'default',
@@ -10,7 +15,7 @@ export default defineConfig({
   projectId: 'of7fq0dg',
   dataset: 'development',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [structureTool(), visionTool(), media(mediaConfig)],
 
   schema: {
     types: schemaTypes,
