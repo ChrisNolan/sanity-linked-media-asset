@@ -10,7 +10,10 @@ import {
   Card,
   Tooltip,
   useToast,
+  Switch,
+  Inline,
 } from "@sanity/ui";
+import { HelpCircleIcon } from "@sanity/icons";
 import { CopyIcon } from "@sanity/icons";
 
 /**
@@ -50,6 +53,7 @@ function useAssetFieldValue(
   const [assetInputValue, setAssetInputValue] = React.useState<
     string | undefined
   >(undefined);
+  // Always keep assetInputValue in sync with assetValue from Sanity
   React.useEffect(() => {
     if (!assetRef) {
       setAssetValue(undefined);
@@ -67,6 +71,10 @@ function useAssetFieldValue(
     };
     fetchAsset();
   }, [assetRef, fieldName, client]);
+  // When assetValue changes (from Sanity), update assetInputValue unless user is editing
+  React.useEffect(() => {
+    setAssetInputValue(assetValue ?? "");
+  }, [assetValue]);
   return [
     assetValue,
     setAssetValue,
@@ -107,56 +115,90 @@ export default function LinkedMediaAssetField(
   const [assetValue, setAssetValue, assetInputValue, setAssetInputValue] =
     useAssetFieldValue(assetRef, fieldName, client);
   const [updatingAsset, setUpdatingAsset] = React.useState(false);
+  // Switch state: true = use shared asset value, false = override locally
+  const [useSharedAsset, setUseSharedAsset] = React.useState(!value);
+
+  // Keep switch in sync if value changes externally
+  React.useEffect(() => {
+    setUseSharedAsset(!value);
+  }, [value]);
 
   return (
     <Card padding={3} radius={2}>
-      <Flex direction="row" align="flex-end" gap={3}>
-        <Box flex={1}>
-          <Stack space={2}>
-            <Text size={1} weight="medium">
-              Local
-            </Text>
-            <TextInput
-              value={value || ""}
-              onChange={(e) =>
-                onChange(
-                  e.currentTarget.value ? set(e.currentTarget.value) : unset()
-                )
-              }
-              placeholder={`Enter ${fieldName}`}
-              {...restElementProps}
-            />
-          </Stack>
-        </Box>
+      <Stack space={3}>
         {assetValue !== undefined && (
-          <>
-            <AssetFieldInput
-              assetInputValue={assetInputValue}
-              setAssetInputValue={setAssetInputValue}
-              assetRef={assetRef}
-              assetValue={assetValue}
-              setAssetValue={setAssetValue}
-              fieldName={fieldName}
-              client={client}
-              updatingAsset={updatingAsset}
-              setUpdatingAsset={setUpdatingAsset}
-              toast={toast}
-            />
-            <Box paddingTop={4}>
-              <Tooltip content="Copy asset value to local field">
-                <Button
-                  icon={CopyIcon}
-                  mode="bleed"
-                  padding={2}
-                  aria-label="Copy from asset"
-                  onClick={() => onChange(set(assetValue))}
-                  disabled={value === assetValue}
-                />
+          <AssetFieldInput
+            assetInputValue={assetInputValue}
+            setAssetInputValue={setAssetInputValue}
+            assetRef={assetRef}
+            assetValue={assetValue}
+            setAssetValue={setAssetValue}
+            fieldName={fieldName}
+            client={client}
+            updatingAsset={updatingAsset}
+            setUpdatingAsset={setUpdatingAsset}
+            toast={toast}
+            useSharedAsset={useSharedAsset}
+            setUseSharedAsset={setUseSharedAsset}
+            onChange={onChange}
+          />
+        )}
+        {!useSharedAsset && (
+          <Flex direction="row" align="flex-end" gap={3}>
+            <Box flex={1}>
+              <Stack space={2}>
+                <Text size={1} weight="medium">
+                  Local
+                </Text>
+                {props.renderDefault ? (
+                  props.renderDefault({
+                    ...props,
+                    elementProps: props.elementProps,
+                  })
+                ) : process.env.NODE_ENV === "development" ? (
+                  (() => {
+                    throw new Error(
+                      "LinkedMediaAssetField: renderDefault is required but was not provided. Check your schema/component registration."
+                    );
+                  })()
+                ) : (
+                  <Card padding={3} tone="critical">
+                    <Text size={1} weight="bold">
+                      ERROR: renderDefault missing
+                    </Text>
+                    <Text size={1}>
+                      This field requires Sanity Studio v3+ and correct schema
+                      registration.
+                    </Text>
+                  </Card>
+                )}
+              </Stack>
+            </Box>
+            <Box>
+              <Tooltip
+                content={
+                  <Box padding={2}>
+                    <Text size={2}>Copy asset value to local field</Text>
+                  </Box>
+                }
+                fallbackPlacements={["right", "left"]}
+                placement="top"
+                portal
+              >
+                <span style={{ display: "inline-block" }}>
+                  <Button
+                    icon={CopyIcon}
+                    mode="bleed"
+                    aria-label="Copy from asset"
+                    onClick={() => onChange(set(assetValue))}
+                    disabled={value === assetValue}
+                  />
+                </span>
               </Tooltip>
             </Box>
-          </>
+          </Flex>
         )}
-      </Flex>
+      </Stack>
     </Card>
   );
 }
@@ -172,6 +214,9 @@ interface AssetFieldInputProps {
   updatingAsset: boolean;
   setUpdatingAsset: (v: boolean) => void;
   toast: ReturnType<typeof useToast>;
+  useSharedAsset: boolean;
+  setUseSharedAsset: (v: boolean) => void;
+  onChange: (patch: any) => void;
 }
 
 /**
@@ -230,13 +275,66 @@ function AssetFieldInput({
   updatingAsset,
   setUpdatingAsset,
   toast,
+  useSharedAsset,
+  setUseSharedAsset,
+  onChange,
 }: AssetFieldInputProps) {
   return (
-    <Box flex={1}>
-      <Stack space={2}>
-        <Text size={1} weight="medium">
-          Asset
-        </Text>
+    <Card padding={0}>
+      <Stack space={3}>
+        <Flex align="center" gap={3}>
+          <Text size={1} weight="medium">
+            Asset
+          </Text>
+          <Switch
+            checked={useSharedAsset}
+            onChange={(e) => {
+              setUseSharedAsset(e.currentTarget.checked);
+              if (e.currentTarget.checked) {
+                // Switched ON: use shared asset value (unset local override)
+                onChange(unset());
+              } else {
+                // Switched OFF: override locally (copy asset value or blank)
+                onChange(set(assetInputValue || ""));
+              }
+            }}
+            id="use-shared-asset-switch"
+            aria-label="Use shared asset value for this field"
+            style={{ marginRight: 2 }}
+          />
+          <Text
+            size={1}
+            as="label"
+            htmlFor="use-shared-asset-switch"
+            style={{ color: "var(--card-muted-fg-color, #aaa)" }}
+          >
+            {useSharedAsset
+              ? "Use value from the shared asset"
+              : "Use value specific to this document"}
+          </Text>
+          <Tooltip
+            content={
+              <Box padding={2}>
+                <Text size={2}>
+                  {useSharedAsset
+                    ? "This field uses the shared asset value. Turn off to override locally."
+                    : "This field overrides the shared asset value locally."}
+                </Text>
+              </Box>
+            }
+            fallbackPlacements={["right", "left"]}
+            placement="top"
+            portal
+          >
+            <Box
+              style={{ display: "flex", alignItems: "center", cursor: "help" }}
+            >
+              <HelpCircleIcon
+                style={{ color: "var(--card-muted-fg-color, #aaa)" }}
+              />
+            </Box>
+          </Tooltip>
+        </Flex>
         <TextInput
           value={assetInputValue || ""}
           onChange={(e) => setAssetInputValue(e.currentTarget.value)}
@@ -257,6 +355,6 @@ function AssetFieldInput({
           disabled={updatingAsset}
         />
       </Stack>
-    </Box>
+    </Card>
   );
 }
