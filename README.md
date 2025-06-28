@@ -32,6 +32,22 @@ defineField({
 })
 ```
 
+#### API Version for Sanity Client
+
+The `LinkedMediaAssetField` component uses Sanity's `useClient` hook to fetch and update asset data. By default, it uses a recent stable API version, but you can override this by passing an `apiVersion` prop to the component if needed:
+
+```ts
+defineField({
+  name: 'title',
+  type: 'string',
+  components: {
+    input: (props) => <LinkedMediaAssetField {...props} apiVersion="2023-08-01" />,
+  },
+})
+```
+
+If you are using the helper, you can pass a custom component to the helper or override the default globally if you wrap or re-export the component.
+
 #### Accepted Option Keys
 
 The following keys are accepted in the options object for `getLinkedMediaAssetFields`:

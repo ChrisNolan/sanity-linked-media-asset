@@ -7,8 +7,12 @@ import {CopyIcon} from '@sanity/icons'
  * Shared input component for image fields that displays the value from the linked asset (if present)
  * alongside the local field value, and allows copying the asset value into the local field.
  */
-export default function LinkedMediaAssetField(props: StringInputProps) {
-  const {value, onChange, elementProps, path} = props
+export interface LinkedMediaAssetFieldProps extends StringInputProps {
+  apiVersion?: string
+}
+
+export default function LinkedMediaAssetField(props: LinkedMediaAssetFieldProps) {
+  const {value, onChange, elementProps, path, apiVersion} = props
   // Remove onChange from elementProps to avoid duplicate prop
   const {onChange: _ignoredOnChange, ...restElementProps} = elementProps || {}
   console.debug('[LinkedMediaAssetField] props:', props)
@@ -27,7 +31,8 @@ export default function LinkedMediaAssetField(props: StringInputProps) {
   const [assetInputValue, setAssetInputValue] = React.useState<string | undefined>(undefined)
   const [updatingAsset, setUpdatingAsset] = React.useState(false)
 
-  const client = useClient({apiVersion: '2025-06-28'})
+  // Use provided apiVersion or default to a stable version
+  const client = useClient({apiVersion: apiVersion || '2023-08-01'})
   React.useEffect(() => {
     if (!assetRef) {
       setAssetValue(undefined)
