@@ -21,8 +21,13 @@
  *     }),
  *   ]
  */
-import {defineField} from 'sanity'
+import {defineField, FieldDefinition} from 'sanity'
 import LinkedMediaAssetField from '../components/LinkedMediaAssetField'
+
+/**
+ * Type alias for the field definitions returned by getLinkedMediaAssetFields.
+ */
+export type LinkedMediaAssetFieldDefinition = FieldDefinition
 
 export interface LinkedMediaAssetFieldsOptions {
   title?: {enabled: boolean}
@@ -32,7 +37,9 @@ export interface LinkedMediaAssetFieldsOptions {
   // Add more fields as needed
 }
 
-export function getLinkedMediaAssetFields(options: LinkedMediaAssetFieldsOptions = {}) {
+export function getLinkedMediaAssetFields(
+  options: LinkedMediaAssetFieldsOptions = {},
+): LinkedMediaAssetFieldDefinition[] {
   const fieldNames: Array<keyof LinkedMediaAssetFieldsOptions> = [
     'title',
     'altText',
