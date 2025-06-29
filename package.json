@@ -1,6 +1,6 @@
 {
   "name": "sanity-linked-media-asset",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Expose and override image-asset fields (title, alt, …) directly in Sanity Studio.",
   "author": "Chris Nolan <iam@chrisnolan.ca>",
   "license": "MIT",
