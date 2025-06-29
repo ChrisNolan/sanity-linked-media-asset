@@ -11,6 +11,8 @@ Expose and override image-asset fields (title, alt, …) directly in Sanity Stud
 
 This plugin provides a way to define image fields in Sanity Studio that are "linked" to the fields of the referenced media asset. It allows you to view, edit, and sync fields (like title, alt text, description, credit line, etc.) between your document and the asset, directly from the studio without having to go into your [media plugin](https://github.com/sanity-io/sanity-plugin-media).
 
+![Screenshot of plugin in use](docs/assets/screen_shot_1.png)
+
 ## Install
 
 Install via **npm**:
